@@ -1,6 +1,6 @@
 {
   "name": "ai-qa-assistant",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "main": "dist/main.js",
   "scripts": {
@@ -21,14 +21,11 @@
   "build": {
     "appId": "com.aiqa.assistant",
     "productName": "AI Q&A Assistant",
-    "icon": "assets/icon.png",
     "mac": {
       "category": "public.app-category.productivity",
       "target": ["dmg", "zip"],
       "icon": "assets/icon.icns",
-      "extendInfo": {
-        "LSUIElement": true
-      }
+      "extendInfo": { "LSUIElement": true }
     },
     "win": {
       "target": ["nsis"],
@@ -36,16 +33,15 @@
     },
     "files": [
       "dist/**/*",
-      "native/keymonitor",
-      "node_modules/better-sqlite3/**/*",
       "assets/icon.icns",
       "assets/icon.png"
     ],
     "extraResources": [
-      { "from": "native/keymonitor", "to": "native/keymonitor" }
+      { "from": "native/keymonitor", "to": "native/keymonitor" },
+      { "from": "../frontend/dist", "to": "frontend" }
     ],
     "asarUnpack": [
-      "node_modules/better-sqlite3/**/*"
+      "node_modules/better-sqlite3/build/Release/better_sqlite3.node"
     ]
   }
 }

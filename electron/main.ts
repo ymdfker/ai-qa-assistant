@@ -7,6 +7,7 @@ import { PlatformAdapter } from './platform/PlatformAdapter';
 import { setupApiIPC } from './api/ApiEngine';
 import { stmts } from './db/Database';
 
+const isDev = process.env.NODE_ENV === 'development';
 let tray: Tray | null = null;
 let platform: PlatformAdapter;
 let keyMonitorProcess: ChildProcess | null = null;
@@ -117,11 +118,10 @@ function createActiveWindow(): BrowserWindow {
 
   platform.applyVibrancy(activeWin);
 
-  const isDev = process.env.NODE_ENV === 'development';
   if (isDev) {
     activeWin.loadURL('http://localhost:5173');
   } else {
-    activeWin.loadFile(path.join(__dirname, '../../frontend/dist/index.html'));
+    activeWin.loadFile(path.join(process.resourcesPath, 'frontend', 'index.html'));
   }
 
   activeWin.on('blur', () => destroyActive());
@@ -221,7 +221,9 @@ function setupTray(): void {
 
 function setupHotkey(): void {
   if (process.platform === 'darwin') {
-    const binPath = path.join(__dirname, '../native/keymonitor');
+    const binPath = isDev
+      ? path.join(__dirname, '../native/keymonitor')
+      : path.join(process.resourcesPath, 'native', 'keymonitor');
     keyMonitorProcess = spawn(binPath, ['300'], { stdio: ['ignore', 'pipe', 'pipe'] });
     keyMonitorProcess.stdout?.on('data', (data: Buffer) => {
       for (const line of data.toString().trim().split('\n')) {

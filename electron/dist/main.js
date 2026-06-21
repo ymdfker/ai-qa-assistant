@@ -10,6 +10,7 @@ const macos_1 = require("./platform/macos");
 const windows_1 = require("./platform/windows");
 const ApiEngine_1 = require("./api/ApiEngine");
 const Database_1 = require("./db/Database");
+const isDev = process.env.NODE_ENV === 'development';
 let tray = null;
 let platform;
 let keyMonitorProcess = null;
@@ -117,12 +118,11 @@ function createActiveWindow() {
         },
     });
     platform.applyVibrancy(activeWin);
-    const isDev = process.env.NODE_ENV === 'development';
     if (isDev) {
         activeWin.loadURL('http://localhost:5173');
     }
     else {
-        activeWin.loadFile(path_1.default.join(__dirname, '../../frontend/dist/index.html'));
+        activeWin.loadFile(path_1.default.join(process.resourcesPath, 'frontend', 'index.html'));
     }
     activeWin.on('blur', () => destroyActive());
     activeWin.on('resize', () => {
@@ -235,7 +235,9 @@ function setupTray() {
 }
 function setupHotkey() {
     if (process.platform === 'darwin') {
-        const binPath = path_1.default.join(__dirname, '../native/keymonitor');
+        const binPath = isDev
+            ? path_1.default.join(__dirname, '../native/keymonitor')
+            : path_1.default.join(process.resourcesPath, 'native', 'keymonitor');
         keyMonitorProcess = (0, child_process_1.spawn)(binPath, ['300'], { stdio: ['ignore', 'pipe', 'pipe'] });
         keyMonitorProcess.stdout?.on('data', (data) => {
             for (const line of data.toString().trim().split('\n')) {
