@@ -50,17 +50,23 @@ int main(int argc, char **argv) {
     }
 
     CGEventMask mask = CGEventMaskBit(kCGEventFlagsChanged);
-    eventTap = CGEventTapCreate(kCGHIDEventTap, kCGHeadInsertEventTap,
-                                kCGEventTapOptionDefault, mask, callback, NULL);
 
-    if (!eventTap) {
-        fprintf(stderr, "Failed to create event tap. Grant accessibility permission in System Preferences > Privacy > Accessibility.\n");
-        return 1;
+    // Poll until accessibility permission is granted
+    while (!eventTap) {
+        eventTap = CGEventTapCreate(kCGHIDEventTap, kCGHeadInsertEventTap,
+                                    kCGEventTapOptionDefault, mask, callback, NULL);
+        if (!eventTap) {
+            fprintf(stderr, "Waiting for accessibility permission...\n");
+            sleep(1);
+        }
     }
 
     CFRunLoopSourceRef src = CFMachPortCreateRunLoopSource(kCFAllocatorDefault, eventTap, 0);
     CFRunLoopAddSource(CFRunLoopGetCurrent(), src, kCFRunLoopCommonModes);
     CGEventTapEnable(eventTap, true);
+
+    printf("READY\n");
+    fflush(stdout);
 
     // Listen for space/desktop switch to hide window
     [[[NSWorkspace sharedWorkspace] notificationCenter]
