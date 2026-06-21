@@ -1,0 +1,7 @@
+com/aiqa/AiQaApplication.class
+com/aiqa/model/Session.class
+com/aiqa/db/DatabaseManager.class
+com/aiqa/model/Attachment.class
+com/aiqa/service/SessionService.class
+com/aiqa/model/Message.class
+com/aiqa/model/ModelConfig.class

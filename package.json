@@ -1,0 +1,15 @@
+{
+  "name": "ai-qa-assistant",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:electron": "cd electron && npm run dev",
+    "dev:backend": "cd backend && mvn spring-boot:run",
+    "build:frontend": "cd frontend && npm run build",
+    "build:backend": "cd backend && mvn package -DskipTests",
+    "build:electron": "cd electron && npm run build",
+    "package:mac": "electron-builder --mac",
+    "package:win": "electron-builder --win"
+  }
+}

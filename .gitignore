@@ -1,0 +1,11 @@
+node_modules/
+electron/node_modules/
+frontend/node_modules/
+electron/dist/*.dmg
+electron/dist/*.zip
+electron/dist/*.blockmap
+electron/dist/mac/
+electron/dist/mac-arm64/
+electron/dist/builder-debug.yml
+.DS_Store
+*.log

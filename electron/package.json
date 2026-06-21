@@ -1,0 +1,51 @@
+{
+  "name": "ai-qa-assistant",
+  "version": "1.0.0",
+  "private": true,
+  "main": "dist/main.js",
+  "scripts": {
+    "dev": "npx tsc && npx electron dist/main.js",
+    "build": "npx tsc",
+    "package": "electron-builder"
+  },
+  "dependencies": {
+    "better-sqlite3": "^12.11.1"
+  },
+  "devDependencies": {
+    "@electron/rebuild": "^4.0.4",
+    "@types/better-sqlite3": "^7.6.13",
+    "electron": "^33.0.0",
+    "electron-builder": "^25.0.0",
+    "typescript": "^5.6.0"
+  },
+  "build": {
+    "appId": "com.aiqa.assistant",
+    "productName": "AI Q&A Assistant",
+    "icon": "assets/icon.png",
+    "mac": {
+      "category": "public.app-category.productivity",
+      "target": ["dmg", "zip"],
+      "icon": "assets/icon.icns",
+      "extendInfo": {
+        "LSUIElement": true
+      }
+    },
+    "win": {
+      "target": ["nsis"],
+      "icon": "assets/icon.png"
+    },
+    "files": [
+      "dist/**/*",
+      "native/keymonitor",
+      "node_modules/better-sqlite3/**/*",
+      "assets/icon.icns",
+      "assets/icon.png"
+    ],
+    "extraResources": [
+      { "from": "native/keymonitor", "to": "native/keymonitor" }
+    ],
+    "asarUnpack": [
+      "node_modules/better-sqlite3/**/*"
+    ]
+  }
+}
