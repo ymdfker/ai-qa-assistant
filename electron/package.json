@@ -20,7 +20,7 @@
   },
   "build": {
     "appId": "com.aiqa.assistant",
-    "productName": "AI Q&A Assistant",
+    "productName": "QAssistant",
     "mac": {
       "category": "public.app-category.productivity",
       "target": ["dmg", "zip"],
