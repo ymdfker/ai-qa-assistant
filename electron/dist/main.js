@@ -125,7 +125,11 @@ function createActiveWindow() {
     else {
         activeWin.loadFile(path_1.default.join(process.resourcesPath, 'frontend', 'index.html'));
     }
-    activeWin.on('blur', () => destroyActive());
+    const createdAt = Date.now();
+    activeWin.on('blur', () => {
+        if (Date.now() - createdAt > 500)
+            destroyActive();
+    });
     activeWin.on('resize', () => {
         if (activeWin && !activeWin.isDestroyed()) {
             const [w, h] = activeWin.getSize();
