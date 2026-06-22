@@ -187,8 +187,10 @@ export const useChatStore = defineStore('chat', () => {
   async function deleteSession(sessionId: number) {
     if (!confirm('确定要删除这个会话吗？此操作不可撤销。')) return
     await api().dbDeleteSession(sessionId)
+    const wasHistory = historySessions.value.find(s => s.id === sessionId)
     sessions.value = sessions.value.filter(s => s.id !== sessionId)
     historySessions.value = historySessions.value.filter(s => s.id !== sessionId)
+    if (wasHistory) historyTotal.value = Math.max(0, historyTotal.value - 1)
     const idx = activeTabs.value.findIndex(t => t.sessionId === sessionId)
     if (idx >= 0) closeTab(idx)
   }

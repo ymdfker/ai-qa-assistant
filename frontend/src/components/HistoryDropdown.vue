@@ -63,6 +63,7 @@ function formatTime(dateStr: string): string {
 
 async function openHistorySession(session: Session) {
   store.historySessions = store.historySessions.filter(s => s.id !== session.id)
+  store.historyTotal = Math.max(0, store.historyTotal - 1)
   session.isActive = true
   store.sessions.unshift(session)
   await window.electronAPI!.dbReactivateSession(session.id).catch(() => {})
