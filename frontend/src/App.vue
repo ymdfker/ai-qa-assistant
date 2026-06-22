@@ -60,8 +60,15 @@ onMounted(async () => {
       store.sessions.unshift(recent)
       window.electronAPI?.dbReactivateSession(recent.id).catch(() => {})
     }
-    await store.fetchMessages(recent.id)
-    store.openTab(recent.id, recent.title, recent.modelName)
+    // Open all active sessions as tabs
+    for (const s of store.sessions) {
+      store.openTab(s.id, s.title, s.modelName)
+    }
+    // Restore previously active tab, or fallback to most recent
+    const savedId = Number(localStorage.getItem('aiqa:activeTabId')) || 0
+    const targetId = savedId && store.activeTabs.find(t => t.sessionId === savedId) ? savedId : recent.id
+    const idx = store.activeTabs.findIndex(t => t.sessionId === targetId)
+    if (idx >= 0) store.switchToTab(idx)
   } else {
     await store.createSession('新对话', store.selectedModel || 'deepseek')
   }

@@ -50,6 +50,9 @@ export const useChatStore = defineStore('chat', () => {
     localStorage.setItem('aiqa:windowPosition', pos)
     try { api().setPositionPreference(pos) } catch {}
   })
+  watch(activeTab, (tab) => {
+    if (tab) localStorage.setItem('aiqa:activeTabId', String(tab.sessionId))
+  })
   watch(hotkeyConfig, (cfg) => {
     localStorage.setItem('aiqa:hotkey', cfg.key)
     localStorage.setItem('aiqa:hotkeyInterval', String(cfg.doublePressInterval))
