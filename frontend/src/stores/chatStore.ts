@@ -203,6 +203,8 @@ export const useChatStore = defineStore('chat', () => {
   function updateSessionTitle(sessionId: number, title: string) {
     const s = sessions.value.find(s => s.id === sessionId)
     if (s) s.title = title
+    const h = historySessions.value.find(s => s.id === sessionId)
+    if (h) h.title = title
     const t = activeTabs.value.find(t => t.sessionId === sessionId)
     if (t) t.title = title
     api().dbUpdateTitle(sessionId, title).catch(() => {})

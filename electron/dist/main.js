@@ -196,9 +196,6 @@ function summarizeAllPending() {
 function destroyActive() {
     if (activeWin && !activeWin.isDestroyed()) {
         summarizeAllPending();
-        // Move active sessions with messages to history, delete empty ones
-        Database_1.stmts.deleteEmptyActive.run();
-        Database_1.stmts.closeAllActive.run();
         activeWin.removeAllListeners();
         activeWin.destroy();
     }
