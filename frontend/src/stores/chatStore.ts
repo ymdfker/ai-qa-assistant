@@ -97,6 +97,7 @@ export const useChatStore = defineStore('chat', () => {
     if (!s) return
     sessions.value = sessions.value.filter(s => s.id !== tab.sessionId)
     const hasMsgs = await api().dbSessionHasMessages(tab.sessionId)
+    console.log('closeTab', tab.sessionId, 'hasMsgs:', hasMsgs, 'historyTotal before:', historyTotal.value)
     if (!hasMsgs) {
       api().dbDeleteSession(tab.sessionId).catch(() => {})
     } else {
