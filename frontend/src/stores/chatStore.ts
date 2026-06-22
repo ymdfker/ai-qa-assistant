@@ -19,7 +19,6 @@ export const useChatStore = defineStore('chat', () => {
   const searchOpen = ref(false)
   const windowPosition = ref<WindowPosition>(
     (localStorage.getItem('aiqa:windowPosition') as WindowPosition) || 'center-top'
-  console.log('Loaded windowPosition:', localStorage.getItem('aiqa:windowPosition'))
   )
   const contextLength = ref(12) // context window in messages
   const hotkeyConfig = ref({
