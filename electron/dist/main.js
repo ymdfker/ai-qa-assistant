@@ -280,6 +280,7 @@ function setupIPC() {
     electron_1.ipcMain.handle('db:updateTitle', (_, id, title) => { Database_1.stmts.updateTitle.run(title, id); });
     electron_1.ipcMain.handle('db:deleteSession', (_, id) => { Database_1.stmts.deleteSession.run(id); });
     electron_1.ipcMain.handle('db:closeSession', (_, id) => { Database_1.stmts.closeSession.run(id); });
+    electron_1.ipcMain.handle('db:reactivateSession', (_, id) => { Database_1.stmts.reactivateSession.run(id); });
     electron_1.ipcMain.handle('db:rollbackMessage', (_, id) => { Database_1.stmts.rollbackMessage.run(id); });
     electron_1.ipcMain.on('window:setPositionPreference', (_, pos) => { positionPreference = pos; });
 }

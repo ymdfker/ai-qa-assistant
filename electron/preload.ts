@@ -21,6 +21,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   dbUpdateTitle: (id: number, title: string) => ipcRenderer.invoke('db:updateTitle', id, title),
   dbDeleteSession: (id: number) => ipcRenderer.invoke('db:deleteSession', id),
   dbCloseSession: (id: number) => ipcRenderer.invoke('db:closeSession', id),
+  dbReactivateSession: (id: number) => ipcRenderer.invoke('db:reactivateSession', id),
   dbRollbackMessage: (id: number) => ipcRenderer.invoke('db:rollbackMessage', id),
 
   // API

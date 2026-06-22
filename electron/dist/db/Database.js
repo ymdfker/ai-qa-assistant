@@ -99,6 +99,7 @@ const stmts = {
     updateTitle: db.prepare("UPDATE sessions SET title = ?, updated_at = datetime('now') WHERE id = ?"),
     deleteSession: db.prepare('DELETE FROM sessions WHERE id = ?'),
     closeSession: db.prepare("UPDATE sessions SET is_active = 0, updated_at = datetime('now') WHERE id = ?"),
+    reactivateSession: db.prepare("UPDATE sessions SET is_active = 1, updated_at = datetime('now') WHERE id = ?"),
     // Messages
     addMessage: db.prepare(`INSERT INTO messages (session_id, role, content, thinking_mode) VALUES (?, ?, ?, ?)`),
     getMessages: db.prepare('SELECT * FROM messages WHERE session_id = ? ORDER BY created_at ASC'),

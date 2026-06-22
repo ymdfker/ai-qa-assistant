@@ -260,6 +260,7 @@ function setupIPC(): void {
   ipcMain.handle('db:updateTitle', (_, id: number, title: string) => { stmts.updateTitle.run(title, id); });
   ipcMain.handle('db:deleteSession', (_, id: number) => { stmts.deleteSession.run(id); });
   ipcMain.handle('db:closeSession', (_, id: number) => { stmts.closeSession.run(id); });
+  ipcMain.handle('db:reactivateSession', (_, id: number) => { stmts.reactivateSession.run(id); });
   ipcMain.handle('db:rollbackMessage', (_, id: number) => { stmts.rollbackMessage.run(id); });
 
   ipcMain.on('window:setPositionPreference', (_, pos: string) => { positionPreference = pos; });
