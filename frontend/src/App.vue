@@ -6,12 +6,13 @@
       </div>
       <div class="title-bar-center">
         <ModelSelector />
+        <div class="thinking-row"><ThinkingToggle /></div>
       </div>
       <div class="title-bar-right">
         <button class="icon-btn" @click="createNewSession" title="新建会话">＋</button>
       </div>
     </div>
-    <div class="main-content" @click="store.sidebarOpen = false">
+    <div class="main-content">
       <Sidebar v-if="store.sidebarOpen && !showSettings" @click.stop />
       <MainArea v-show="!store.sidebarOpen && !showSettings" />
     </div>
@@ -23,6 +24,7 @@
 import { ref, onMounted, provide } from 'vue'
 import { useChatStore } from '@/stores/chatStore'
 import ModelSelector from '@/components/ModelSelector.vue'
+import ThinkingToggle from '@/components/ThinkingToggle.vue'
 import Sidebar from '@/components/Sidebar.vue'
 import MainArea from '@/components/MainArea.vue'
 import SettingsPanel from '@/components/SettingsPanel.vue'
@@ -41,17 +43,24 @@ onMounted(async () => {
     await store.fetchModels()
     if (store.models.length > 0) store.selectedModel = store.models[0].modelName
   } catch { store.selectedModel = 'deepseek' }
+
   try { await store.fetchActiveSessions() } catch {}
   try { await store.fetchHistory() } catch {}
+
+  // Search all sessions (active + history) for most recent within 2 days
   const twoDaysAgo = Date.now() - 2 * 24 * 60 * 60 * 1000
-  const recent = store.sessions.find(s => new Date(s.updatedAt).getTime() > twoDaysAgo)
+  const all = [...store.sessions, ...store.historySessions]
+    .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
+  const recent = all.find(s => new Date(s.updatedAt).getTime() > twoDaysAgo)
+
   if (recent) {
+    if (!recent.isActive) {
+      store.historySessions = store.historySessions.filter(s => s.id !== recent.id)
+      recent.isActive = true
+      store.sessions.unshift(recent)
+    }
     await store.fetchMessages(recent.id)
     store.openTab(recent.id, recent.title, recent.modelName)
-  } else if (store.historySessions.length > 0) {
-    const latest = store.historySessions[0]
-    await store.fetchMessages(latest.id)
-    store.openTab(latest.id, latest.title, latest.modelName)
   } else {
     await store.createSession('新对话', store.selectedModel || 'deepseek')
   }
