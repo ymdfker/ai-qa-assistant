@@ -216,6 +216,7 @@ function destroyActive() {
         }
         catch { }
         summarizeAllPending();
+        Database_1.stmts.deleteEmptyActive.run();
         activeWin.removeAllListeners();
         activeWin.destroy();
     }

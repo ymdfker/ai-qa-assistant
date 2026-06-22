@@ -188,6 +188,7 @@ function destroyActive() {
   if (activeWin && !activeWin.isDestroyed()) {
     try { activeWin.webContents.send('toggle-visibility') } catch {}
     summarizeAllPending();
+    stmts.deleteEmptyActive.run();
     activeWin.removeAllListeners();
     activeWin.destroy();
   }
