@@ -120,14 +120,10 @@ function createActiveWindow() {
     platform.applyVibrancy(activeWin);
     if (isDev) {
         activeWin.loadURL('http://localhost:5173');
-        activeWin.webContents.openDevTools({ mode: 'detach' });
     }
     else {
         activeWin.loadFile(path_1.default.join(process.resourcesPath, 'frontend', 'index.html'));
     }
-    activeWin.on('blur', () => {
-        activeWin?.hide();
-    });
     activeWin.on('resize', () => {
         if (activeWin && !activeWin.isDestroyed()) {
             const [w, h] = activeWin.getSize();
