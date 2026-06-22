@@ -70,7 +70,8 @@ function toggleHistory() { store.showHistory = !store.showHistory; if (store.sho
 </script>
 
 <style scoped>
-.sidebar { position: absolute; top: 0; left: 0; bottom: 0; width: 220px; border-right: 1px solid var(--border-color); background: var(--bg-secondary); backdrop-filter: blur(60px) saturate(2); -webkit-backdrop-filter: blur(60px) saturate(2); display: flex; flex-direction: column; overflow: visible; z-index: 10; }
+.sidebar { position: absolute; top: 0; left: 0; bottom: 0; width: 220px; border-right: 1px solid var(--border-color); background: rgba(30,30,46,1); display: flex; flex-direction: column; overflow: visible; z-index: 10; }
+@media (prefers-color-scheme: light) { .sidebar { background: rgba(245,245,250,1); } }
 .search-box { padding: 12px; position: relative; }
 .search-input { width: 100%; padding: 8px 12px; background: rgba(255,255,255,0.06); border: 1px solid var(--border-color); border-radius: var(--radius); color: var(--text-primary); font-size: 13px; outline: none; }
 .search-input:focus { border-color: var(--accent); }
