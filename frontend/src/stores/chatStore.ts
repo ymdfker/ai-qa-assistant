@@ -96,7 +96,8 @@ export const useChatStore = defineStore('chat', () => {
     const s = sessions.value.find(s => s.id === tab.sessionId)
     if (!s) return
     sessions.value = sessions.value.filter(s => s.id !== tab.sessionId)
-    if (s.messages && s.messages.length === 0) {
+    const hasMsgs = await api().dbSessionHasMessages(tab.sessionId)
+    if (!hasMsgs) {
       api().dbDeleteSession(tab.sessionId).catch(() => {})
     } else {
       s.isActive = false

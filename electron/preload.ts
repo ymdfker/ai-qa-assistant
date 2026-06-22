@@ -24,6 +24,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   dbCloseSession: (id: number) => ipcRenderer.invoke('db:closeSession', id),
   dbReactivateSession: (id: number) => ipcRenderer.invoke('db:reactivateSession', id),
   dbRollbackMessage: (id: number) => ipcRenderer.invoke('db:rollbackMessage', id),
+  dbSessionHasMessages: (id: number) => ipcRenderer.invoke('db:sessionHasMessages', id),
 
   // API
   apiSend: (job: any) => ipcRenderer.send('api:send', job),

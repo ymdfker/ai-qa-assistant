@@ -269,6 +269,7 @@ function setupIPC(): void {
   ipcMain.handle('db:closeSession', (_, id: number) => { stmts.closeSession.run(id); });
   ipcMain.handle('db:reactivateSession', (_, id: number) => { stmts.reactivateSession.run(id); });
   ipcMain.handle('db:rollbackMessage', (_, id: number) => { stmts.rollbackMessage.run(id); });
+  ipcMain.handle('db:sessionHasMessages', (_, id: number) => ((stmts.hasMessages.get(id) as any)?.cnt || 0) > 0);
 
   ipcMain.on('window:setPositionPreference', (_, pos: string) => { positionPreference = pos; });
 }

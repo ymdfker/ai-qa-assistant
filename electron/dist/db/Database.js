@@ -108,6 +108,7 @@ const stmts = {
     getMessages: db.prepare('SELECT * FROM messages WHERE session_id = ? ORDER BY created_at ASC'),
     rollbackMessage: db.prepare('UPDATE messages SET is_rolled_back = 1 WHERE id = ?'),
     touchSession: db.prepare("UPDATE sessions SET updated_at = datetime('now') WHERE id = ?"),
+    hasMessages: db.prepare('SELECT COUNT(*) as cnt FROM messages WHERE session_id = ?'),
 };
 exports.stmts = stmts;
 function getDB() { return db; }

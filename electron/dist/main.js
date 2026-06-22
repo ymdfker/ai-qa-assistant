@@ -290,6 +290,7 @@ function setupIPC() {
     electron_1.ipcMain.handle('db:closeSession', (_, id) => { Database_1.stmts.closeSession.run(id); });
     electron_1.ipcMain.handle('db:reactivateSession', (_, id) => { Database_1.stmts.reactivateSession.run(id); });
     electron_1.ipcMain.handle('db:rollbackMessage', (_, id) => { Database_1.stmts.rollbackMessage.run(id); });
+    electron_1.ipcMain.handle('db:sessionHasMessages', (_, id) => (Database_1.stmts.hasMessages.get(id)?.cnt || 0) > 0);
     electron_1.ipcMain.on('window:setPositionPreference', (_, pos) => { positionPreference = pos; });
 }
 // Keep process alive even with zero windows
