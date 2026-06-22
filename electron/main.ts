@@ -120,6 +120,7 @@ function createActiveWindow(): BrowserWindow {
 
   if (isDev) {
     activeWin.loadURL('http://localhost:5173');
+    activeWin.webContents.openDevTools({ mode: 'bottom' });
   } else {
     activeWin.loadFile(path.join(process.resourcesPath, 'frontend', 'index.html'));
   }
