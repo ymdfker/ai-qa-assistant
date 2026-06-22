@@ -1,6 +1,5 @@
 <template>
   <div class="message" :class="message.role.toLowerCase()">
-    <div v-if="message.role === 'ASSISTANT'" class="avatar">🤖</div>
     <div class="bubble">
       <div class="bubble-header" v-if="message.thinkingMode">
         <span class="thinking-badge">{{ message.thinkingMode }}</span>
@@ -16,7 +15,6 @@
         <button class="action-btn" @click="$emit('rollback')" title="回滚此回复">↩ 回滚</button>
       </div>
     </div>
-    <div v-if="message.role === 'USER'" class="avatar">👤</div>
   </div>
 </template>
 
@@ -62,7 +60,6 @@ function iconForType(t: string) { return t === 'IMAGE' ? '🖼' : t === 'VIDEO' 
 .message.user { align-self: flex-end; flex-direction: row-reverse; }
 .message.assistant { align-self: flex-start; }
 .message.system { align-self: center; font-size: 12px; color: var(--text-secondary); }
-.avatar { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; background: var(--bg-hover); }
 .bubble { padding: 6px 10px; border-radius: 8px; font-size: 11px; line-height: 1.4; }
 .user .bubble { background: var(--accent-dim); border-bottom-right-radius: 4px; }
 .assistant .bubble { background: rgba(255,255,255,0.06); border-bottom-left-radius: 4px; }
