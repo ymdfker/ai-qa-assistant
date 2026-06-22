@@ -216,7 +216,7 @@ function setupTray(): void {
     { label: '退出', click: () => app.quit() },
   ]));
   tray.setToolTip('AI Q&A Assistant');
-  tray.on('click', () => toggleWindow());
+  // Tray click: no action (only double-Option summons)
 }
 
 function setupHotkey(): void {

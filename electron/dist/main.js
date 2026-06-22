@@ -231,7 +231,7 @@ function setupTray() {
         { label: '退出', click: () => electron_1.app.quit() },
     ]));
     tray.setToolTip('AI Q&A Assistant');
-    tray.on('click', () => toggleWindow());
+    // Tray click: no action (only double-Option summons)
 }
 function setupHotkey() {
     if (process.platform === 'darwin') {
