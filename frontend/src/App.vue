@@ -56,6 +56,7 @@ onMounted(async () => {
       store.historySessions = store.historySessions.filter(s => s.id !== recent.id)
       recent.isActive = true
       store.sessions.unshift(recent)
+      window.electronAPI?.dbReactivateSession(recent.id).catch(() => {})
     }
     await store.fetchMessages(recent.id)
     store.openTab(recent.id, recent.title, recent.modelName)
