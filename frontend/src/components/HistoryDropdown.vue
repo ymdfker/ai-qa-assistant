@@ -55,9 +55,6 @@ function formatTime(dateStr: string): string {
 }
 
 async function openHistorySession(session: Session) {
-  store.historySessions = store.historySessions.filter(s => s.id !== session.id)
-  session.isActive = true
-  store.sessions.unshift(session)
   await store.fetchMessages(session.id)
   store.openTab(session.id, session.title, session.modelName)
   store.showHistory = false

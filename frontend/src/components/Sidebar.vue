@@ -62,14 +62,6 @@ function onSearch() {
 }
 async function openSearchResult(session: any) {
   store.searchOpen = false
-  // Ensure session is in active list and messages loaded
-  if (!session.isActive) {
-    store.historySessions = store.historySessions.filter((s: any) => s.id !== session.id)
-    session.isActive = true
-    if (!store.sessions.find((s: any) => s.id === session.id)) {
-      store.sessions.unshift(session)
-    }
-  }
   await store.fetchMessages(session.id)
   store.openTab(session.id, session.title, session.modelName)
   store.searchQuery = ''
