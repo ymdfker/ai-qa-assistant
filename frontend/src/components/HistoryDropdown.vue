@@ -4,8 +4,8 @@
       <h3>历史对话</h3>
       <button class="close-btn" @click="$emit('close')">✕</button>
     </div>
-    <div class="dropdown-body" v-if="store.historySessions.length > 0">
-      <template v-for="group in groupedHistory" :key="group.label">
+    <div class="dropdown-body" v-if="store.historySessions.length > 0" @scroll="onScroll" ref="bodyRef">
+      <template v-for="group in paginatedGroups" :key="group.label">
         <div class="date-group-label">{{ group.label }}</div>
         <div v-for="session in group.sessions" :key="session.id" class="history-item" @click="openHistorySession(session)">
           <div class="history-item-info">
@@ -22,13 +22,28 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useChatStore } from '@/stores/chatStore'
 import type { Session } from '@/types'
 defineEmits(['close'])
 const store = useChatStore()
 
 interface DateGroup { label: string; sessions: Session[] }
+
+const historyLimit = ref(20)
+const bodyRef = ref<HTMLElement>()
+const paginatedGroups = computed(() => {
+  let count = 0
+  return groupedHistory.value.map(g => {
+    const sessions = g.sessions.slice(0, Math.max(0, historyLimit.value - count))
+    count += sessions.length
+    return { ...g, sessions }
+  }).filter(g => g.sessions.length > 0)
+})
+function onScroll() {
+  const el = bodyRef.value; if (!el) return
+  if (el.scrollTop + el.clientHeight >= el.scrollHeight - 40) historyLimit.value += 20
+}
 const groupedHistory = computed<DateGroup[]>(() => {
   const groups: Record<string, Session[]> = {}
   const now = new Date()

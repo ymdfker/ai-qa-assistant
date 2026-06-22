@@ -2,10 +2,8 @@
   <div class="sidebar" @click.stop="onSidebarClick">
     <div class="search-box" ref="searchBoxRef" @click.stop>
       <input v-model="store.searchQuery" type="text" placeholder="搜索会话..." @input="onSearch" @focus="store.searchOpen = true" class="search-input" />
-      <!-- Search results dropdown -->
       <div class="search-results" v-if="store.searchOpen && store.searchQuery.trim() && store.searchResults.length > 0">
-        <div v-for="r in store.searchResults" :key="r.id" class="search-item"
-          @click="openSearchResult(r)">
+        <div v-for="r in store.searchResults" :key="r.id" class="search-item" @click="openSearchResult(r)">
           <span class="search-item-title">{{ r.title }}</span>
           <span class="search-item-badge" :class="{ active: r.isActive }">{{ r.isActive ? '活跃' : '历史' }}</span>
         </div>
@@ -18,9 +16,9 @@
       <button class="history-btn" @click="toggleHistory">📋 历史对话 ({{ store.historySessions.length }})</button>
       <HistoryDropdown v-if="store.showHistory" @close="store.showHistory = false" />
     </div>
-    <div class="session-list">
+    <div class="session-list" @scroll="onSessionScroll" ref="sessionListRef">
       <div class="section-label">活跃会话</div>
-      <div v-for="session in store.sessions" :key="session.id" class="session-item"
+      <div v-for="session in visibleSessions" :key="session.id" class="session-item"
         :class="{ active: store.activeTab?.sessionId === session.id }"
         @click="store.openTab(session.id, session.title, session.modelName)">
         <span class="session-icon">{{ session.icon }}</span>
@@ -36,14 +34,32 @@
 </template>
 
 <script setup lang="ts">
-import { inject, type Ref } from 'vue'
+import { inject, type Ref, ref, onMounted, onUnmounted, computed } from 'vue'
 import { useChatStore } from '@/stores/chatStore'
 import HistoryDropdown from './HistoryDropdown.vue'
 const store = useChatStore()
-
-import { onMounted, onUnmounted, ref } from 'vue'
+const showSettings = inject<Ref<boolean>>('showSettings')!
 const searchBoxRef = ref<HTMLElement>()
 const historyRef = ref<HTMLElement>()
+const sessionListRef = ref<HTMLElement>()
+
+// Pagination: show 20 sessions at a time, load more on scroll
+const sessionLimit = ref(20)
+const visibleSessions = computed(() => store.sessions.slice(0, sessionLimit.value))
+function onSessionScroll() {
+  const el = sessionListRef.value; if (!el) return
+  if (el.scrollTop + el.clientHeight >= el.scrollHeight - 40) {
+    sessionLimit.value += 20
+  }
+}
+
+let timer: ReturnType<typeof setTimeout> | null = null
+function onSearch() {
+  if (timer) clearTimeout(timer)
+  timer = setTimeout(() => { if (store.searchQuery.trim()) store.searchHistory(store.searchQuery.trim()) }, 300)
+}
+function toggleHistory() { store.showHistory = !store.showHistory; if (store.showHistory) store.fetchHistory() }
+
 onMounted(() => document.addEventListener('click', onDocClick))
 onUnmounted(() => document.removeEventListener('click', onDocClick))
 function onDocClick() { store.searchOpen = false; store.showHistory = false }
@@ -52,21 +68,13 @@ function onSidebarClick(e: MouseEvent) {
   if (searchBoxRef.value && !searchBoxRef.value.contains(t)) store.searchOpen = false
   if (historyRef.value && !historyRef.value.contains(t)) store.showHistory = false
 }
-const showSettings = inject<Ref<boolean>>('showSettings')!
-let timer: ReturnType<typeof setTimeout> | null = null
-function onSearch() {
-  if (timer) clearTimeout(timer)
-  timer = setTimeout(() => {
-    if (store.searchQuery.trim()) store.searchHistory(store.searchQuery.trim())
-  }, 300)
-}
+
 async function openSearchResult(session: any) {
   store.searchOpen = false
   await store.fetchMessages(session.id)
   store.openTab(session.id, session.title, session.modelName)
   store.searchQuery = ''
 }
-function toggleHistory() { store.showHistory = !store.showHistory; if (store.showHistory) store.fetchHistory() }
 </script>
 
 <style scoped>
