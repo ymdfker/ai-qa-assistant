@@ -29,6 +29,7 @@ import type { Message } from '@/types'
 const props = defineProps<{ sessionId: number }>()
 const store = useChatStore()
 const inputText = ref('')
+const inputEl = ref<HTMLTextAreaElement>()
 const messages = ref<Message[]>([])
 const messagesContainer = ref<HTMLDivElement>()
 const fileUploader = ref<InstanceType<typeof FileUploader>>()
