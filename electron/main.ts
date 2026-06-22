@@ -180,6 +180,8 @@ function summarizeAllPending() {
 function destroyActive() {
   if (activeWin && !activeWin.isDestroyed()) {
     summarizeAllPending();
+    // Move all active sessions to history
+    stmts.closeAllActive.run();
     activeWin.removeAllListeners();
     activeWin.destroy();
   }

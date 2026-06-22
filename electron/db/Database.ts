@@ -107,6 +107,7 @@ const stmts = {
   deleteSession: db.prepare('DELETE FROM sessions WHERE id = ?'),
   closeSession: db.prepare("UPDATE sessions SET is_active = 0, updated_at = datetime('now') WHERE id = ?"),
   reactivateSession: db.prepare("UPDATE sessions SET is_active = 1, updated_at = datetime('now') WHERE id = ?"),
+  closeAllActive: db.prepare("UPDATE sessions SET is_active = 0, updated_at = datetime('now') WHERE is_active = 1"),
 
   // Messages
   addMessage: db.prepare(
