@@ -101,7 +101,8 @@ const stmts = {
     deleteSession: db.prepare('DELETE FROM sessions WHERE id = ?'),
     closeSession: db.prepare("UPDATE sessions SET is_active = 0, updated_at = datetime('now') WHERE id = ?"),
     reactivateSession: db.prepare("UPDATE sessions SET is_active = 1, updated_at = datetime('now') WHERE id = ?"),
-    closeAllActive: db.prepare("UPDATE sessions SET is_active = 0, updated_at = datetime('now') WHERE is_active = 1"),
+    closeAllActive: db.prepare("UPDATE sessions SET is_active = 0, updated_at = datetime('now') WHERE is_active = 1 AND id IN (SELECT DISTINCT session_id FROM messages)"),
+    deleteEmptyActive: db.prepare("DELETE FROM sessions WHERE is_active = 1 AND id NOT IN (SELECT DISTINCT session_id FROM messages)"),
     // Messages
     addMessage: db.prepare(`INSERT INTO messages (session_id, role, content, thinking_mode) VALUES (?, ?, ?, ?)`),
     getMessages: db.prepare('SELECT * FROM messages WHERE session_id = ? ORDER BY created_at ASC'),

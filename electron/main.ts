@@ -180,7 +180,8 @@ function summarizeAllPending() {
 function destroyActive() {
   if (activeWin && !activeWin.isDestroyed()) {
     summarizeAllPending();
-    // Move all active sessions to history
+    // Move active sessions with messages to history, delete empty ones
+    stmts.deleteEmptyActive.run();
     stmts.closeAllActive.run();
     activeWin.removeAllListeners();
     activeWin.destroy();
