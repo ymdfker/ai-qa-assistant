@@ -36,6 +36,8 @@ async function createNewSession() {
   await store.createSession('新对话', model)
 }
 
+window.electronAPI?.onNewSession(() => { createNewSession() })
+
 onMounted(async () => {
   try {
     await store.fetchModels()

@@ -227,7 +227,11 @@ function setupTray() {
     const icon = createTrayIcon();
     tray = new electron_1.Tray(icon);
     tray.setContextMenu(electron_1.Menu.buildFromTemplate([
-        { label: '新建会话', click: () => activeWin?.webContents.send('new-session') },
+        { label: '新建会话', click: () => {
+                if (!activeWin || activeWin.isDestroyed())
+                    toggleWindow();
+                setTimeout(() => activeWin?.webContents.send('new-session'), 500);
+            } },
         { type: 'separator' },
         { label: '显示/隐藏', click: () => toggleWindow() },
         { type: 'separator' },
