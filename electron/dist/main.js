@@ -120,6 +120,7 @@ function createActiveWindow() {
     platform.applyVibrancy(activeWin);
     if (isDev) {
         activeWin.loadURL('http://localhost:5173');
+        activeWin.webContents.openDevTools({ mode: 'detach' });
     }
     else {
         activeWin.loadFile(path_1.default.join(process.resourcesPath, 'frontend', 'index.html'));
