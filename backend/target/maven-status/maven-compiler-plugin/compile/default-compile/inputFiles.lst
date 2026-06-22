@@ -1,7 +1,0 @@
-/Users/huanggang/Documents/ai-qa-assistant/backend/src/main/java/com/aiqa/AiQaApplication.java
-/Users/huanggang/Documents/ai-qa-assistant/backend/src/main/java/com/aiqa/db/DatabaseManager.java
-/Users/huanggang/Documents/ai-qa-assistant/backend/src/main/java/com/aiqa/model/Attachment.java
-/Users/huanggang/Documents/ai-qa-assistant/backend/src/main/java/com/aiqa/model/Message.java
-/Users/huanggang/Documents/ai-qa-assistant/backend/src/main/java/com/aiqa/model/ModelConfig.java
-/Users/huanggang/Documents/ai-qa-assistant/backend/src/main/java/com/aiqa/model/Session.java
-/Users/huanggang/Documents/ai-qa-assistant/backend/src/main/java/com/aiqa/service/SessionService.java

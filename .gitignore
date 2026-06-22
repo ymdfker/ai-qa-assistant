@@ -1,6 +1,7 @@
 node_modules/
 electron/node_modules/
 frontend/node_modules/
+backend/
 electron/dist/*.dmg
 electron/dist/*.zip
 electron/dist/*.blockmap
