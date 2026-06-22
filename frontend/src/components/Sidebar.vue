@@ -44,12 +44,11 @@ const historyRef = ref<HTMLElement>()
 const sessionListRef = ref<HTMLElement>()
 
 // Pagination: show 20 sessions at a time, load more on scroll
-const sessionLimit = ref(20)
-const visibleSessions = computed(() => store.sessions.slice(0, sessionLimit.value))
+const visibleSessions = computed(() => store.sessions)
 function onSessionScroll() {
   const el = sessionListRef.value; if (!el) return
   if (el.scrollTop + el.clientHeight >= el.scrollHeight - 40) {
-    sessionLimit.value += 20
+    store.loadMoreSessions()
   }
 }
 

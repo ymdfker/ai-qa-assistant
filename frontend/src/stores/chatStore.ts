@@ -116,24 +116,48 @@ export const useChatStore = defineStore('chat', () => {
     } catch (e) { console.error('fetchMessages:', e) }
   }
 
-  async function fetchActiveSessions() {
+  const sessionOffset = ref(0)
+  const historyOffset = ref(0)
+  const hasMoreSessions = ref(true)
+  const hasMoreHistory = ref(true)
+  const PAGE = 20
+
+  async function loadMoreSessions() {
+    if (!hasMoreSessions.value) return
     try {
-      const rows = await api().dbGetActiveSessions()
-      sessions.value = rows.map((r: any) => ({
+      const rows = await api().dbGetActiveSessions(PAGE, sessionOffset.value)
+      const mapped = rows.map((r: any) => ({
         id: r.id, title: r.title, modelName: r.model_name, createdAt: r.created_at,
         updatedAt: r.updated_at, isActive: true, icon: r.icon || '💬', messages: [],
       }))
+      if (rows.length < PAGE) hasMoreSessions.value = false
+      sessionOffset.value += rows.length
+      sessions.value = [...sessions.value, ...mapped]
+    } catch (e) { console.error(e) }
+  }
+
+  async function fetchActiveSessions() {
+    sessionOffset.value = 0; hasMoreSessions.value = true; sessions.value = []
+    await loadMoreSessions()
+  }
+
+  async function loadMoreHistory() {
+    if (!hasMoreHistory.value) return
+    try {
+      const rows = await api().dbGetHistorySessions(PAGE, historyOffset.value)
+      const mapped = rows.map((r: any) => ({
+        id: r.id, title: r.title, modelName: r.model_name, createdAt: r.created_at,
+        updatedAt: r.updated_at, isActive: false, icon: r.icon || '💬', messages: [],
+      }))
+      if (rows.length < PAGE) hasMoreHistory.value = false
+      historyOffset.value += rows.length
+      historySessions.value = [...historySessions.value, ...mapped]
     } catch (e) { console.error(e) }
   }
 
   async function fetchHistory() {
-    try {
-      const rows = await api().dbGetHistorySessions()
-      historySessions.value = rows.map((r: any) => ({
-        id: r.id, title: r.title, modelName: r.model_name, createdAt: r.created_at,
-        updatedAt: r.updated_at, isActive: false, icon: r.icon || '💬', messages: [],
-      }))
-    } catch (e) { console.error(e) }
+    historyOffset.value = 0; hasMoreHistory.value = true; historySessions.value = []
+    await loadMoreHistory()
   }
 
   async function searchHistory(q: string) {
@@ -199,7 +223,7 @@ export const useChatStore = defineStore('chat', () => {
     sidebarOpen, showHistory, historySessions, searchQuery, searchResults, searchOpen,
     contextLength, windowPosition, hotkeyConfig, isStreaming,
     fetchModels, createSession, openTab, closeTab, switchToTab, setModel,
-    fetchMessages, fetchActiveSessions, fetchHistory, searchHistory,
+    fetchMessages, fetchActiveSessions, fetchHistory, loadMoreSessions, loadMoreHistory, searchHistory,
     deleteSession, rollbackMessage, addCustomModel, updateSessionTitle,
   }
 })

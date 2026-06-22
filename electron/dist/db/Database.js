@@ -89,8 +89,8 @@ const stmts = {
     // Sessions
     createSession: db.prepare(`INSERT INTO sessions (title, model_name) VALUES (?, ?)`),
     getSession: db.prepare('SELECT * FROM sessions WHERE id = ?'),
-    getActiveSessions: db.prepare('SELECT * FROM sessions WHERE is_active = 1 ORDER BY updated_at DESC'),
-    getHistorySessions: db.prepare('SELECT * FROM sessions WHERE is_active = 0 ORDER BY updated_at DESC'),
+    getActiveSessions: db.prepare('SELECT * FROM sessions WHERE is_active = 1 ORDER BY updated_at DESC LIMIT ? OFFSET ?'),
+    getHistorySessions: db.prepare('SELECT * FROM sessions WHERE is_active = 0 ORDER BY updated_at DESC LIMIT ? OFFSET ?'),
     getAllSessions: db.prepare('SELECT * FROM sessions ORDER BY updated_at DESC'),
     searchSessions: db.prepare(`SELECT DISTINCT s.* FROM sessions s
      LEFT JOIN messages m ON m.session_id = s.id

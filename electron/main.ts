@@ -248,8 +248,8 @@ function setupIPC(): void {
   ipcMain.handle('db:createSession', (_, title: string, modelName: string) => {
     const r = stmts.createSession.run(title, modelName); return stmts.getSession.get(r.lastInsertRowid);
   });
-  ipcMain.handle('db:getActiveSessions', () => stmts.getActiveSessions.all());
-  ipcMain.handle('db:getHistorySessions', () => stmts.getHistorySessions.all());
+  ipcMain.handle('db:getActiveSessions', (_, limit: number, offset: number) => stmts.getActiveSessions.all(limit, offset));
+  ipcMain.handle('db:getHistorySessions', (_, limit: number, offset: number) => stmts.getHistorySessions.all(limit, offset));
   ipcMain.handle('db:searchSessions', (_, q: string) => {
     const kw = `%${q}%`; return stmts.searchSessions.all(kw, kw);
   });

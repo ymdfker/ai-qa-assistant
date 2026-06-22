@@ -30,19 +30,11 @@ const store = useChatStore()
 
 interface DateGroup { label: string; sessions: Session[] }
 
-const historyLimit = ref(20)
 const bodyRef = ref<HTMLElement>()
-const paginatedGroups = computed(() => {
-  let count = 0
-  return groupedHistory.value.map(g => {
-    const sessions = g.sessions.slice(0, Math.max(0, historyLimit.value - count))
-    count += sessions.length
-    return { ...g, sessions }
-  }).filter(g => g.sessions.length > 0)
-})
+const paginatedGroups = computed(() => groupedHistory.value)
 function onScroll() {
   const el = bodyRef.value; if (!el) return
-  if (el.scrollTop + el.clientHeight >= el.scrollHeight - 40) historyLimit.value += 20
+  if (el.scrollTop + el.clientHeight >= el.scrollHeight - 40) store.loadMoreHistory()
 }
 const groupedHistory = computed<DateGroup[]>(() => {
   const groups: Record<string, Session[]> = {}

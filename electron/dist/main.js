@@ -265,8 +265,8 @@ function setupIPC() {
         const r = Database_1.stmts.createSession.run(title, modelName);
         return Database_1.stmts.getSession.get(r.lastInsertRowid);
     });
-    electron_1.ipcMain.handle('db:getActiveSessions', () => Database_1.stmts.getActiveSessions.all());
-    electron_1.ipcMain.handle('db:getHistorySessions', () => Database_1.stmts.getHistorySessions.all());
+    electron_1.ipcMain.handle('db:getActiveSessions', (_, limit, offset) => Database_1.stmts.getActiveSessions.all(limit, offset));
+    electron_1.ipcMain.handle('db:getHistorySessions', (_, limit, offset) => Database_1.stmts.getHistorySessions.all(limit, offset));
     electron_1.ipcMain.handle('db:searchSessions', (_, q) => {
         const kw = `%${q}%`;
         return Database_1.stmts.searchSessions.all(kw, kw);
