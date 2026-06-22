@@ -125,10 +125,8 @@ function createActiveWindow() {
     else {
         activeWin.loadFile(path_1.default.join(process.resourcesPath, 'frontend', 'index.html'));
     }
-    const createdAt = Date.now();
     activeWin.on('blur', () => {
-        if (Date.now() - createdAt > 500)
-            destroyActive();
+        activeWin?.hide();
     });
     activeWin.on('resize', () => {
         if (activeWin && !activeWin.isDestroyed()) {
@@ -211,9 +209,13 @@ function destroyActive() {
     activeWin = null;
 }
 function toggleWindow() {
-    if (activeWin && !activeWin.isDestroyed() && activeWin.isVisible()) {
+    if (activeWin && !activeWin.isDestroyed()) {
+        if (activeWin.isVisible()) {
+            destroyActive();
+            return;
+        }
+        // Hidden window: destroy before creating new one
         destroyActive();
-        return;
     }
     const w = createActiveWindow();
     w.once('ready-to-show', () => {

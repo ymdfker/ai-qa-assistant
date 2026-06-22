@@ -125,9 +125,8 @@ function createActiveWindow(): BrowserWindow {
     activeWin.loadFile(path.join(process.resourcesPath, 'frontend', 'index.html'));
   }
 
-  const createdAt = Date.now();
   activeWin.on('blur', () => {
-    if (Date.now() - createdAt > 500) destroyActive();
+    activeWin?.hide();
   });
   activeWin.on('resize', () => {
     if (activeWin && !activeWin.isDestroyed()) {
@@ -192,9 +191,10 @@ function destroyActive() {
 }
 
 function toggleWindow(): void {
-  if (activeWin && !activeWin.isDestroyed() && activeWin.isVisible()) {
+  if (activeWin && !activeWin.isDestroyed()) {
+    if (activeWin.isVisible()) { destroyActive(); return; }
+    // Hidden window: destroy before creating new one
     destroyActive();
-    return;
   }
   const w = createActiveWindow();
   w.once('ready-to-show', () => {
