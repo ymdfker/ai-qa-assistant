@@ -137,8 +137,8 @@ function createActiveWindow(): BrowserWindow {
 }
 
 function summarizeAllPending() {
-  // Check ALL sessions, not just active ones
-  const sessions = stmts.getAllSessions.all() as any[];
+  // Only check active sessions — typically just a handful
+  const sessions = stmts.getActiveSessions.all(100, 0) as any[];
   console.log('[summarize] sessions:', sessions.length, sessions.map((s: any) => s.title));
   for (const s of sessions) {
     if (s.title !== '新对话') { console.log('[summarize] skip:', s.title); continue; }
