@@ -6,7 +6,6 @@
       </div>
       <div class="title-bar-center">
         <ModelSelector />
-        <div class="thinking-row"><ThinkingToggle /></div>
       </div>
       <div class="title-bar-right">
         <button class="icon-btn" @click="createNewSession" title="新建会话">＋</button>
@@ -24,7 +23,6 @@
 import { ref, onMounted, provide } from 'vue'
 import { useChatStore } from '@/stores/chatStore'
 import ModelSelector from '@/components/ModelSelector.vue'
-import ThinkingToggle from '@/components/ThinkingToggle.vue'
 import Sidebar from '@/components/Sidebar.vue'
 import MainArea from '@/components/MainArea.vue'
 import SettingsPanel from '@/components/SettingsPanel.vue'

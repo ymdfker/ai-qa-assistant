@@ -48,7 +48,9 @@ const groupedHistory = computed<DateGroup[]>(() => {
 })
 
 function formatTime(dateStr: string): string {
-  const d = new Date(dateStr)
+  // SQLite stores UTC; suffix 'Z' for correct local-time parsing
+  const d = new Date(dateStr.replace(' ', 'T') + 'Z')
+  if (isNaN(d.getTime())) return ''
   return `${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`
 }
 
