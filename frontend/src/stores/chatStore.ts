@@ -88,7 +88,7 @@ export const useChatStore = defineStore('chat', () => {
     }
   }
 
-  async function closeTab(index: number) {
+  function closeTab(index: number) {
     const tab = activeTabs.value[index]
     if (!tab) return
     if (tab.title === '新对话') summarizeTitle(tab.sessionId)
@@ -96,9 +96,8 @@ export const useChatStore = defineStore('chat', () => {
     const s = sessions.value.find(s => s.id === tab.sessionId)
     if (!s) return
     sessions.value = sessions.value.filter(s => s.id !== tab.sessionId)
-    const hasMsgs = await api().dbSessionHasMessages(tab.sessionId)
-    console.log('closeTab', tab.sessionId, 'hasMsgs:', hasMsgs, 'historyTotal before:', historyTotal.value)
-    if (!hasMsgs) {
+    if (s.title === '新对话') {
+      // Never-used auto-created session — delete entirely
       api().dbDeleteSession(tab.sessionId).catch(() => {})
     } else {
       s.isActive = false
