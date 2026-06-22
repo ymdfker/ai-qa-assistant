@@ -88,7 +88,7 @@ export const useChatStore = defineStore('chat', () => {
     }
   }
 
-  function closeTab(index: number) {
+  async function closeTab(index: number) {
     const tab = activeTabs.value[index]
     if (!tab) return
     if (tab.title === '新对话') summarizeTitle(tab.sessionId)
