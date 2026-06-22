@@ -13,7 +13,7 @@
       </div>
     </div>
     <div class="history-toggle" ref="historyRef">
-      <button class="history-btn" @click="toggleHistory">📋 历史对话 ({{ store.historySessions.length }})</button>
+      <button class="history-btn" @click="toggleHistory">📋 历史对话 ({{ store.historyTotal }})</button>
       <HistoryDropdown v-if="store.showHistory" @close="store.showHistory = false" />
     </div>
     <div class="session-list" @scroll="onSessionScroll" ref="sessionListRef">

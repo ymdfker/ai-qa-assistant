@@ -92,12 +92,16 @@ export const useChatStore = defineStore('chat', () => {
     const tab = activeTabs.value[index]
     if (!tab) return
     if (tab.title === '新对话') summarizeTitle(tab.sessionId)
-    // Move session from active to history
+    // Delete empty sessions, archive only if has messages
     const s = sessions.value.find(s => s.id === tab.sessionId)
-    if (s) {
+    if (!s) return
+    sessions.value = sessions.value.filter(s => s.id !== tab.sessionId)
+    if (s.messages && s.messages.length === 0) {
+      api().dbDeleteSession(tab.sessionId).catch(() => {})
+    } else {
       s.isActive = false
-      sessions.value = sessions.value.filter(s => s.id !== tab.sessionId)
       historySessions.value.unshift(s)
+      historyTotal.value++
       api().dbCloseSession(tab.sessionId).catch(() => {})
     }
     activeTabs.value.splice(index, 1)
@@ -120,6 +124,7 @@ export const useChatStore = defineStore('chat', () => {
   const historyOffset = ref(0)
   const hasMoreSessions = ref(true)
   const hasMoreHistory = ref(true)
+  const historyTotal = ref(0)
   const PAGE = 20
 
   async function loadMoreSessions() {
@@ -141,6 +146,13 @@ export const useChatStore = defineStore('chat', () => {
     await loadMoreSessions()
   }
 
+  let historyCountLoaded = false
+  async function loadHistoryCount() {
+    if (historyCountLoaded) return
+    try { historyTotal.value = await api().dbCountHistorySessions() } catch (e) { console.error(e) }
+    historyCountLoaded = true
+  }
+
   async function loadMoreHistory() {
     if (!hasMoreHistory.value) return
     try {
@@ -157,7 +169,8 @@ export const useChatStore = defineStore('chat', () => {
 
   async function fetchHistory() {
     historyOffset.value = 0; hasMoreHistory.value = true; historySessions.value = []
-    await loadMoreHistory()
+    historyCountLoaded = false
+    await Promise.all([loadMoreHistory(), loadHistoryCount()])
   }
 
   async function searchHistory(q: string) {
@@ -220,7 +233,7 @@ export const useChatStore = defineStore('chat', () => {
   return {
     sessions, activeTabs, activeTabIndex, activeTab, activeSession,
     models, selectedModel, selectedThinkingLevel,
-    sidebarOpen, showHistory, historySessions, searchQuery, searchResults, searchOpen,
+    sidebarOpen, showHistory, historySessions, historyTotal, searchQuery, searchResults, searchOpen,
     contextLength, windowPosition, hotkeyConfig, isStreaming,
     fetchModels, createSession, openTab, closeTab, switchToTab, setModel,
     fetchMessages, fetchActiveSessions, fetchHistory, loadMoreSessions, loadMoreHistory, searchHistory,

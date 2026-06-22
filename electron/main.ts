@@ -252,6 +252,7 @@ function setupIPC(): void {
   });
   ipcMain.handle('db:getActiveSessions', (_, limit: number, offset: number) => stmts.getActiveSessions.all(limit, offset));
   ipcMain.handle('db:getHistorySessions', (_, limit: number, offset: number) => stmts.getHistorySessions.all(limit, offset));
+  ipcMain.handle('db:countHistorySessions', () => (stmts.countHistory.get() as any)?.cnt || 0);
   ipcMain.handle('db:searchSessions', (_, q: string) => {
     const kw = `%${q}%`; return stmts.searchSessions.all(kw, kw);
   });

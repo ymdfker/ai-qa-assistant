@@ -15,6 +15,7 @@ electron_1.contextBridge.exposeInMainWorld('electronAPI', {
     dbCreateSession: (title, modelName) => electron_1.ipcRenderer.invoke('db:createSession', title, modelName),
     dbGetActiveSessions: (limit, offset) => electron_1.ipcRenderer.invoke('db:getActiveSessions', limit, offset),
     dbGetHistorySessions: (limit, offset) => electron_1.ipcRenderer.invoke('db:getHistorySessions', limit, offset),
+    dbCountHistorySessions: () => electron_1.ipcRenderer.invoke('db:countHistorySessions'),
     dbSearchSessions: (q) => electron_1.ipcRenderer.invoke('db:searchSessions', q),
     dbGetMessages: (sid) => electron_1.ipcRenderer.invoke('db:getMessages', sid),
     dbAddMessage: (sid, role, content, tm) => electron_1.ipcRenderer.invoke('db:addMessage', sid, role, content, tm),

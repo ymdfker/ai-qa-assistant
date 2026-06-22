@@ -269,6 +269,7 @@ function setupIPC() {
     });
     electron_1.ipcMain.handle('db:getActiveSessions', (_, limit, offset) => Database_1.stmts.getActiveSessions.all(limit, offset));
     electron_1.ipcMain.handle('db:getHistorySessions', (_, limit, offset) => Database_1.stmts.getHistorySessions.all(limit, offset));
+    electron_1.ipcMain.handle('db:countHistorySessions', () => Database_1.stmts.countHistory.get()?.cnt || 0);
     electron_1.ipcMain.handle('db:searchSessions', (_, q) => {
         const kw = `%${q}%`;
         return Database_1.stmts.searchSessions.all(kw, kw);
