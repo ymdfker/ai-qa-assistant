@@ -39,7 +39,8 @@ done
 
 echo "[3/3] Starting Electron..."
 cd "$PROJECT_DIR/electron"
-NODE_ENV=development npx electron dist/main.js &
+export NODE_ENV=development
+npx electron dist/main.js &
 ELECTRON_PID=$!
 
 echo ""
