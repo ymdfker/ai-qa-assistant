@@ -75,11 +75,19 @@ async function sendMessage() {
   const msgIndex = messages.value.length // will be the index after push
   messages.value.push({ id: Date.now() + 1, role: 'ASSISTANT', content: '', thinkingMode: store.selectedThinkingLevel, isRolledBack: false, createdAt: new Date().toISOString(), attachments: [] })
 
-  // Build conversation history (last 6 turns = 12 messages)
+  // Inject current time + location into first message as context
+  const now = new Date()
+  const timeStr = now.toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai', hour12: false })
+  const sysCtx = `[系统上下文: 当前时间 ${timeStr}，用户位置在中国，模型不具备联网搜索能力，请基于自身知识回答。]`
+
   const history = messages.value.slice(-store.contextLength).map(m => ({
     role: m.role === 'USER' ? 'user' : 'assistant',
     content: m.role === 'SYSTEM' ? '' : m.content
   })).filter(m => m.content)
+  // Only inject system context for the first exchange, or prepend to first user message
+  if (history.length <= 1) {
+    history.unshift({ role: 'system', content: sysCtx })
+  }
   history.push({ role: 'user', content: text })
 
   api.apiSend({ modelName: store.selectedModel, sessionId: props.sessionId, messages: history })
