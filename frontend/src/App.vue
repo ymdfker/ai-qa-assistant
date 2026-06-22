@@ -36,6 +36,10 @@ async function createNewSession() {
   await store.createSession('新对话', model)
 }
 
+// Save active tab before window closes
+window.electronAPI?.onToggleVisibility(() => {
+  if (store.activeTab?.sessionId) localStorage.setItem('aiqa:activeTabId', String(store.activeTab.sessionId))
+})
 window.electronAPI?.onNewSession(() => { createNewSession() })
 
 onMounted(async () => {
@@ -47,26 +51,26 @@ onMounted(async () => {
   try { await store.fetchActiveSessions() } catch {}
   try { await store.fetchHistory() } catch {}
 
-  // Search all sessions (active + history) for most recent within 2 days
-  const twoDaysAgo = Date.now() - 2 * 24 * 60 * 60 * 1000
-  const all = [...store.sessions, ...store.historySessions]
-    .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
-  const recent = all.find(s => new Date(s.updatedAt).getTime() > twoDaysAgo)
-
-  if (recent) {
+  if (store.sessions.length > 0 || store.historySessions.length > 0) {
+    // Find most recent from any source, reactivate if needed
+    const all = [...store.sessions, ...store.historySessions]
+      .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
+    const recent = all[0]
     if (!recent.isActive) {
       store.historySessions = store.historySessions.filter(s => s.id !== recent.id)
       recent.isActive = true
       store.sessions.unshift(recent)
       window.electronAPI?.dbReactivateSession(recent.id).catch(() => {})
     }
-    // Open ALL active sessions as tabs, not just the most recent
+    // Open all active sessions as tabs
     for (const s of store.sessions) {
       store.openTab(s.id, s.title, s.modelName)
     }
-    // Switch to the most recent one
-    const recentIdx = store.activeTabs.findIndex(t => t.sessionId === recent.id)
-    if (recentIdx >= 0) store.switchToTab(recentIdx)
+    // Restore previously active tab, or fall back to most recent
+    const savedId = Number(localStorage.getItem('aiqa:activeTabId')) || 0
+    const targetId = savedId || recent.id
+    const idx = store.activeTabs.findIndex(t => t.sessionId === targetId)
+    store.switchToTab(idx >= 0 ? idx : 0)
   } else {
     await store.createSession('新对话', store.selectedModel || 'deepseek')
   }

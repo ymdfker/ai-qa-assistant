@@ -195,6 +195,10 @@ function summarizeAllPending() {
 }
 function destroyActive() {
     if (activeWin && !activeWin.isDestroyed()) {
+        try {
+            activeWin.webContents.send('toggle-visibility');
+        }
+        catch { }
         summarizeAllPending();
         activeWin.removeAllListeners();
         activeWin.destroy();
