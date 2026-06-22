@@ -65,7 +65,7 @@ async function openHistorySession(session: Session) {
   store.historySessions = store.historySessions.filter(s => s.id !== session.id)
   session.isActive = true
   store.sessions.unshift(session)
-  window.electronAPI!.dbReactivateSession(session.id).catch(() => {})
+  await window.electronAPI!.dbReactivateSession(session.id).catch(() => {})
   await store.fetchMessages(session.id)
   store.openTab(session.id, session.title, session.modelName)
   store.showHistory = false

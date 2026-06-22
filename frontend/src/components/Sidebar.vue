@@ -57,7 +57,7 @@ function onSearch() {
   if (timer) clearTimeout(timer)
   timer = setTimeout(() => { if (store.searchQuery.trim()) store.searchHistory(store.searchQuery.trim()) }, 300)
 }
-function toggleHistory() { store.showHistory = !store.showHistory; if (store.showHistory) store.fetchHistory() }
+function toggleHistory() { store.showHistory = !store.showHistory }
 
 onMounted(() => document.addEventListener('click', onDocClick))
 onUnmounted(() => document.removeEventListener('click', onDocClick))
