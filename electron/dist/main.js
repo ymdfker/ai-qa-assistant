@@ -120,6 +120,7 @@ function createActiveWindow() {
     platform.applyVibrancy(activeWin);
     if (isDev) {
         activeWin.loadURL('http://localhost:5173');
+        activeWin.webContents.openDevTools({ mode: 'detach' });
     }
     else {
         activeWin.loadFile(path_1.default.join(process.resourcesPath, 'frontend', 'index.html'));
@@ -220,7 +221,9 @@ function toggleWindow() {
         w.focus();
         // Direct focus — IPC may arrive before component mounts
         setTimeout(() => {
-            w.webContents.executeJavaScript(`document.querySelector('textarea')?.focus()`);
+            if (w && !w.isDestroyed()) {
+                w.webContents.executeJavaScript(`document.querySelector('textarea')?.focus()`);
+            }
         }, 300);
     });
 }
@@ -231,7 +234,9 @@ function setupTray() {
         { label: '新建会话', click: () => {
                 if (!activeWin || activeWin.isDestroyed())
                     toggleWindow();
-                setTimeout(() => activeWin?.webContents.send('new-session'), 500);
+                const win = activeWin;
+                setTimeout(() => { if (win && !win.isDestroyed())
+                    win.webContents.send('new-session'); }, 500);
             } },
         { type: 'separator' },
         { label: '显示/隐藏', click: () => toggleWindow() },
