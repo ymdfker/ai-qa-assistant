@@ -47,26 +47,14 @@ onMounted(async () => {
   try { await store.fetchActiveSessions() } catch {}
   try { await store.fetchHistory() } catch {}
 
-  // Search all sessions (active + history) for most recent within 2 days
-  const twoDaysAgo = Date.now() - 2 * 24 * 60 * 60 * 1000
-  const all = [...store.sessions, ...store.historySessions]
-    .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
-  const recent = all.find(s => new Date(s.updatedAt).getTime() > twoDaysAgo)
-
-  if (recent) {
-    if (!recent.isActive) {
-      store.historySessions = store.historySessions.filter(s => s.id !== recent.id)
-      recent.isActive = true
-      store.sessions.unshift(recent)
-      window.electronAPI?.dbReactivateSession(recent.id).catch(() => {})
-    }
+  if (store.sessions.length > 0) {
     // Open all active sessions as tabs
     for (const s of store.sessions) {
       store.openTab(s.id, s.title, s.modelName)
     }
-    // Restore previously active tab, or fallback to most recent
+    // Restore previously active tab, or fallback to first active
     const savedId = Number(localStorage.getItem('aiqa:activeTabId')) || 0
-    const targetId = savedId && store.activeTabs.find(t => t.sessionId === savedId) ? savedId : recent.id
+    const targetId = savedId && store.activeTabs.find(t => t.sessionId === savedId) ? savedId : store.sessions[0].id
     const idx = store.activeTabs.findIndex(t => t.sessionId === targetId)
     if (idx >= 0) store.switchToTab(idx)
   } else {
