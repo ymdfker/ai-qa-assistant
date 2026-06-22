@@ -11,7 +11,15 @@ const isDev = process.env.NODE_ENV === 'development';
 let tray: Tray | null = null;
 let platform: PlatformAdapter;
 let keyMonitorProcess: ChildProcess | null = null;
-let positionPreference = 'center-top';
+// Persisted settings
+const fs = require('fs');
+const configPath = path.join(app.getPath('userData'), 'config.json');
+function loadConfig(): any { try { return JSON.parse(fs.readFileSync(configPath, 'utf8')); } catch { return {}; } }
+function saveConfig(key: string, value: any) {
+  const cfg = loadConfig(); cfg[key] = value;
+  try { fs.writeFileSync(configPath, JSON.stringify(cfg)); } catch {}
+}
+let positionPreference = loadConfig().position || 'center-top';
 let lastWidth = 340, lastHeight = 800;
 let activeWin: BrowserWindow | null = null;
 
@@ -271,7 +279,9 @@ function setupIPC(): void {
   ipcMain.handle('db:reactivateSession', (_, id: number) => { stmts.reactivateSession.run(id); });
   ipcMain.handle('db:rollbackMessage', (_, id: number) => { stmts.rollbackMessage.run(id); });
 
-  ipcMain.on('window:setPositionPreference', (_, pos: string) => { positionPreference = pos; });
+  ipcMain.on('window:setPositionPreference', (_, pos: string) => {
+    positionPreference = pos; saveConfig('position', pos);
+  });
 }
 
 // Keep process alive even with zero windows

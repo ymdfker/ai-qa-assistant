@@ -14,7 +14,24 @@ const isDev = process.env.NODE_ENV === 'development';
 let tray = null;
 let platform;
 let keyMonitorProcess = null;
-let positionPreference = 'center-top';
+// Persisted settings
+const fs = require('fs');
+const configPath = path_1.default.join(electron_1.app.getPath('userData'), 'config.json');
+function loadConfig() { try {
+    return JSON.parse(fs.readFileSync(configPath, 'utf8'));
+}
+catch {
+    return {};
+} }
+function saveConfig(key, value) {
+    const cfg = loadConfig();
+    cfg[key] = value;
+    try {
+        fs.writeFileSync(configPath, JSON.stringify(cfg));
+    }
+    catch { }
+}
+let positionPreference = loadConfig().position || 'center-top';
 let lastWidth = 340, lastHeight = 800;
 let activeWin = null;
 function getPlatformAdapter() {
@@ -298,7 +315,10 @@ function setupIPC() {
     electron_1.ipcMain.handle('db:closeSession', (_, id) => { Database_1.stmts.closeSession.run(id); });
     electron_1.ipcMain.handle('db:reactivateSession', (_, id) => { Database_1.stmts.reactivateSession.run(id); });
     electron_1.ipcMain.handle('db:rollbackMessage', (_, id) => { Database_1.stmts.rollbackMessage.run(id); });
-    electron_1.ipcMain.on('window:setPositionPreference', (_, pos) => { positionPreference = pos; });
+    electron_1.ipcMain.on('window:setPositionPreference', (_, pos) => {
+        positionPreference = pos;
+        saveConfig('position', pos);
+    });
 }
 // Keep process alive even with zero windows
 electron_1.app.on('window-all-closed', () => { });
