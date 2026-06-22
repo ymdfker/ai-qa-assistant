@@ -99,10 +99,15 @@ export const useChatStore = defineStore('chat', () => {
     const s = sessions.value.find(s => s.id === tab.sessionId)
     if (!s) return
     sessions.value = sessions.value.filter(s => s.id !== tab.sessionId)
-    s.isActive = false
-    historySessions.value.unshift(s)
-    historyTotal.value++
-    api().dbCloseSession(tab.sessionId).catch(() => {})
+    if (s.messages && s.messages.length === 0 && s.title === '新对话') {
+      // Never-used session — delete entirely
+      api().dbDeleteSession(tab.sessionId).catch(() => {})
+    } else {
+      s.isActive = false
+      historySessions.value.unshift(s)
+      historyTotal.value++
+      api().dbCloseSession(tab.sessionId).catch(() => {})
+    }
     activeTabs.value.splice(index, 1)
     if (activeTabIndex.value >= activeTabs.value.length) switchToTab(Math.max(0, activeTabs.value.length - 1))
   }
