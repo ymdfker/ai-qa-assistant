@@ -125,7 +125,11 @@ async function sendMessage() {
 
 function stopGeneration() { window.electronAPI!.apiCancel(); isStreaming.value = false }
 async function onRollback(id: number) { await store.rollbackMessage(id); messages.value = messages.value.filter(m => m.id !== id) }
-function onKeydown(e: KeyboardEvent) { if (e.key === 'Enter' && !e.ctrlKey && !e.metaKey) { e.preventDefault(); sendMessage() } }
+function onKeydown(e: KeyboardEvent) {
+  // Don't send during IME composition (Chinese/Japanese input method)
+  if (e.isComposing || e.keyCode === 229) return
+  if (e.key === 'Enter' && !e.ctrlKey && !e.metaKey) { e.preventDefault(); sendMessage() }
+}
 function onFilesChanged(files: File[]) { attachedFiles.value = files }
 function scrollToBottom() {
   nextTick(() => {
